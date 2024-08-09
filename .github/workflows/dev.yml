@@ -41,5 +41,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{secrets.PAT}}
-          repository: vishnutr96/shopping-app-infra
+          repository: vishnutr96/Hash_project-infra
           event-type: dev-deploy-event  #any string kodukkam
