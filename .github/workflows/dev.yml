@@ -4,7 +4,7 @@ name: "Hash project application Dev image build "
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
