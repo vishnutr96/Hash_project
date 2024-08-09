@@ -1,0 +1,45 @@
+---
+name: "Hash project application Dev image build "
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEV_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.DEV_AWS_REGION }}
+      packer_version: "1.9.4"
+
+    steps:
+
+      - name: "checkout repository"
+        uses: actions/checkout@v3
+
+      - name: "Setup packer"
+        uses: hashicorp/setup-packer@main
+        with:
+          version: ${{ env.packer_version }}
+
+      - name: "packer init"
+        run: packer init .
+        working-directory: ./packer/
+
+      - name: "packer validate"
+        run: packer validate -var-file="dev.pkrvars.hcl" .
+        working-directory: ./packer/
+
+      - name: "packer build"
+        run: packer build -var-file="dev.pkrvars.hcl" .
+        working-directory: ./packer/
+
+      - name: "Notify Dev Deploy Job"
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{secrets.PAT}}
+          repository: vishnutr96/shopping-app-infra
+          event-type: dev-deploy-event  #any string kodukkam
